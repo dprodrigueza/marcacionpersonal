@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box
+} from "@mui/material";
 
 export default function HistorialTable() {
   const [registros, setRegistros] = useState([]);
@@ -14,41 +17,56 @@ export default function HistorialTable() {
     fetchData();
   }, []);
 
+  const total = registros.reduce((acc, r) => acc + (Number(r.monto) || 0), 0);
+
   return (
     <div>
-      <h3>Historial</h3>
-      <table border="1" cellPadding="4">
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Entrada Mañana</th>
-            <th>Salida Almuerzo</th>
-            <th>Entrada Tarde</th>
-            <th>Salida Final</th>
-            <th>Horas normales</th>
-            <th>Horas extra</th>
-            <th>Monto normal</th>
-            <th>Monto extra</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {registros.map(r => (
-            <tr key={r.fecha}>
-              <td>{r.fecha}</td>
-              <td>{r.entradaManana || ""}</td>
-              <td>{r.salidaAlmuerzo || ""}</td>
-              <td>{r.entradaTarde || ""}</td>
-              <td>{r.salidaFinal || ""}</td>
-              <td>{r.horasTrabajadas || 0}</td>
-              <td>{r.horasExtras || 0}</td>
-              <td>${r.montoNormal || 0}</td>
-              <td>${r.montoExtra || 0}</td>
-              <td>${r.monto || 0}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+        <Typography variant="h6" gutterBottom>Historial</Typography>
+        <Typography variant="h6" color="primary">
+          Total: <b>${total.toFixed(2)}</b>
+        </Typography>
+      </Box>
+      <TableContainer component={Paper} sx={{ mb: 2 }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Fecha</TableCell>
+              <TableCell>Entrada Mañana</TableCell>
+              <TableCell>Salida Almuerzo</TableCell>
+              <TableCell>Entrada Tarde</TableCell>
+              <TableCell>Salida Final</TableCell>
+              <TableCell>Salida Permiso</TableCell>
+              <TableCell>Entrada Permiso</TableCell>
+              <TableCell>Min. Permiso</TableCell>
+              <TableCell>Horas normales</TableCell>
+              <TableCell>Horas extra</TableCell>
+              <TableCell>Monto normal</TableCell>
+              <TableCell>Monto extra</TableCell>
+              <TableCell>Total</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {registros.map(r => (
+              <TableRow key={r.fecha}>
+                <TableCell>{r.fecha}</TableCell>
+                <TableCell>{r.entradaManana || ""}</TableCell>
+                <TableCell>{r.salidaAlmuerzo || ""}</TableCell>
+                <TableCell>{r.entradaTarde || ""}</TableCell>
+                <TableCell>{r.salidaFinal || ""}</TableCell>
+                <TableCell>{r.salidaPermiso || ""}</TableCell>
+                <TableCell>{r.entradaPermiso || ""}</TableCell>
+                <TableCell>{r.minutosPermiso || 0}</TableCell>
+                <TableCell>{r.horasTrabajadas || 0}</TableCell>
+                <TableCell>{r.horasExtras || 0}</TableCell>
+                <TableCell>${r.montoNormal || 0}</TableCell>
+                <TableCell>${r.montoExtra || 0}</TableCell>
+                <TableCell><b>${r.monto || 0}</b></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
